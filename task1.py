@@ -4,41 +4,74 @@
 
 import numpy as np
 from scipy import linalg
+import matplotlib.pyplot as plt
+import battle_record1 as bt1
 
 
-original_np = np.load('study/svd_study/three_eyes.npy')
-original_np2 = original_np.reshape(81, 243)        #もとの行列をreshape
-u, s, v = linalg.svd(original_np2)                
+get_np = np.load('study/svd_study/three_eyes.npy')               
 
 
-#右側をsvd
-r = 30                                             #残す特異値の数   
-ur = u[:, :r]                                      #u
-sr = np.diag(s[:r])                                #s
-vr_t = v[:r, :]                                    #vダガー
-vr = np.transpose(vr_t)                            #v
-L = ur @ sr
-print(f"L: {L.shape}")           
-print(f"vr_t: {vr_t.shape}")
+#もとの評価値の配列(81, 243)をtucker分解する        
+def tucker(X, r):
+    X = X.reshape(81, 243)
+    u, _, v = linalg.svd(X)
+    #左側  
+    U = u[:, :r]                                      #u
+    Ut = np.transpose(U)                               #uダガー                             
+    #右側 
+    r2 = 3 * r                                      
+    Vt = v[:r2, :]                                    #vダガー
+    V = np.transpose(Vt)                             #v
+    #コアテンソル
+    C = Ut @ X @ V     
+    #復元            
+    Y = U @ C @ Vt
+    #圧縮率
+    rate = (U.size + C.size + Vt.size) / X.size
+    print(rate) 
 
+    return [Y.reshape(3,3,3,3,3,3,3,3,3), rate]
 
-#左側をsvd
-r2 = 10                                             #残す特異値の数   
-ur2 = u[:, :r2]                                      #u
-ur_t2 = np.transpose(ur2)                            #uダガー
-sr2 = np.diag(s[:r2])                                #s
-vr_t2 = v[:r2, :]                                    #vダガー
-L2 = sr2 @ vr_t2
-print(f"ur2: {ur2.shape}")
-print(f"L2: {L2.shape}")  
+#tucker(get_np, 10)
 
+#戦績とフロベニウスノルムをプロット
+def make_plot():              
+    #battle#
+    x = []
+    y1 = []                                  #originalが勝つ割合
+    y2 = []                                  #svdが勝つ割合
+    y3 = []                                  #引き分けの割合
+    #frobenius#
+    # y4 = []
+    # original_np = get_np.reshape(81,243)     #もとの行列をreshape    
+    # X = original_np.copy()        
+    # u, s, v = linalg.svd(X)                              #svd
+    # norm = np.sqrt(np.sum(X * X))                        #sのフロベニウスノルム
 
-#復元
-core_np = ur_t2 @ original_np2 @ vr                 #コアテンソル
-recover_np = ur2 @ ur_t2 @ original_np2 @ vr @ vr_t
-print(f"core_np: {core_np.shape}") 
-print(f"recover_np: {recover_np.shape}")  
+    for r in range(0, 28):
+        x.append(tucker(get_np, r)[1])                        #残した特異値の割合                       
+        #battle#
+        y1.append(bt1.battle(get_np, tucker(get_np, r)[0])[0])
+        y2.append(bt1.battle(get_np, tucker(get_np, r)[0])[1])
+        y3.append(bt1.battle(get_np, tucker(get_np, r)[0])[2])
+        #frobenius#  
+        # ur = u[:, :r]
+        # sr = np.diag(np.sqrt(s[:r]))                #sの平方根
+        # vr = v[:r, :]
+        # A = ur @ sr
+        # B = sr @ vr
+        # Y = A @ B                                   #近似した行列
+        # norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))     #フロベニウスノルム
+        # y4.append(norm1 / norm)
+    plt.xlabel("left singular value ratio")
+    ######plt.ylabel("ratio")
+    #battle#
+    plt.plot(x, y1, color = 'red')
+    plt.plot(x, y2, color = 'blue')
+    plt.plot(x, y3, color = 'green')
+    #frobenius#
+    # plt.plot(x, y4, color = 'black')
 
+    plt.show()
 
-#圧縮率
-print((ur2.size + core_np.size + vr_t.size) / original_np2.size) 
+make_plot()
