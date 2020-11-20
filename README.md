@@ -1,4 +1,4 @@
-# tucker分解の活用
+# Using HOSVD(Higher-Order SVD) for tucker decompostion
 
 
 
