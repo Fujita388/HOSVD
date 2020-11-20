@@ -5,6 +5,7 @@
 import numpy as np
 from scipy import linalg
 import matplotlib.pyplot as plt
+import main
 
 
 get_np = np.load('study/svd_study/three_eyes.npy')               
@@ -22,14 +23,61 @@ def tucker(X, r):
     Vt = v[:r2, :]                                    #vダガー
     V = np.transpose(Vt)                             #v
     #コアテンソル
-    C = Ut @ X @ V     
+    C = Ut @ X @ V    
     #復元            
-    Y = U @ C @ Vt
+    Y = U @ C @ Vt  
     #圧縮率
     rate = (U.size + C.size + Vt.size) / X.size
-    #print(rate) 
-
     return [Y.reshape(3,3,3,3,3,3,3,3,3), rate]
 
-#tucker(get_np, 10)
+#tucker(get_np, 81)
+
+
+
+#戦績、フロベニウスノルムの相対誤差と圧縮率のグラフをプロット
+def make_plot():             
+    x = []
+    #battle#
+    y1 = []                                  #originalが勝つ割合
+    y2 = []                                  #svdが勝つ割合
+    y3 = []                                  #引き分けの割合
+    #frobenius#
+    y4 = []
+    X = get_np.reshape(81, 243)       
+    u, _, v = linalg.svd(X)                              #svd
+    norm = np.sqrt(np.sum(X * X))                      
+    for i in range(0, 28):
+        #battle#
+        y1.append(main.battle(get_np, tucker(get_np, i)[0])[0])
+        y2.append(main.battle(get_np, tucker(get_np, i)[0])[1])
+        y3.append(main.battle(get_np, tucker(get_np, i)[0])[2])
+        #frobenius#
+        ###左側  
+        U = u[:, :i]                                      #u
+        Ut = np.transpose(U)                               #uダガー                             
+        ###右側 
+        i2 = 3 * i                                      
+        Vt = v[:i2, :]                                    #vダガー
+        V = np.transpose(Vt)                             #v
+        ###コアテンソル
+        C = Ut @ X @ V     
+        ###復元            
+        Y = U @ C @ Vt
+        ###フロベニウスノルム
+        norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
+        x.append((U.size + C.size + Vt.size) / X.size)
+        y4.append(norm1 / norm)
+    #battle#
+    plt.xlabel("compression ratio")
+    plt.plot(x, y1, color = 'red')
+    plt.plot(x, y2, color = 'blue')
+    plt.plot(x, y3, color = 'green')
+    #frobenius#
+    plt.plot(x, y4, color = 'black')
+
+    plt.show()
+
+make_plot()
+
+
 
