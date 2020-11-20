@@ -44,7 +44,6 @@ def make_plot():
     #frobenius#
     y4 = []
     X = get_np.reshape(81, 243)       
-    u, _, v = linalg.svd(X)                              #svd
     norm = np.sqrt(np.sum(X * X))                      
     for i in range(0, 28):
         #battle#
@@ -52,20 +51,10 @@ def make_plot():
         y2.append(main.battle(get_np, tucker(get_np, i)[0])[1])
         y3.append(main.battle(get_np, tucker(get_np, i)[0])[2])
         #frobenius#
-        ###左側  
-        U = u[:, :i]                                      #u
-        Ut = np.transpose(U)                               #uダガー                             
-        ###右側 
-        i2 = 3 * i                                      
-        Vt = v[:i2, :]                                    #vダガー
-        V = np.transpose(Vt)                             #v
-        ###コアテンソル
-        C = Ut @ X @ V     
-        ###復元            
-        Y = U @ C @ Vt
-        ###フロベニウスノルム
+        Y = tucker(get_np, i)[0].reshape(81, 243)
+        rate = tucker(get_np, i)[1]
         norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
-        x.append((U.size + C.size + Vt.size) / X.size)
+        x.append(rate)
         y4.append(norm1 / norm)
     #battle#
     plt.xlabel("compression ratio")
