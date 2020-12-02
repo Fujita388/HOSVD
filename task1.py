@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import main
 
 
-get_np = np.load('study/svd_study/three_eyes.npy')               
+get_np = np.load('study/svd/three_eyes.npy')               
 
 
 #もとの評価値の配列(81, 243)をtucker分解する        
@@ -43,7 +43,7 @@ def make_plot():
     y3 = []                                  #引き分けの割合
     #frobenius#
     y4 = []
-    X = get_np.reshape(81, 243)       
+    X = get_np.reshape(81, 243)      
     norm = np.sqrt(np.sum(X * X))                      
     for i in range(0, 28):
         #battle#
