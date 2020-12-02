@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import main
 
 
-get_np = np.load('study/svd_study/three_eyes.npy')
+get_np = np.load('study/svd/three_eyes.npy')
 
 
 #もとの行列を(27, 27, 27)のテンソルとして、tucker分解
@@ -45,7 +45,7 @@ def tucker(X, r):  #特異値を全て残す
     Y = Y.transpose(2, 0, 1)  
     #圧縮率
     rate = (VRt.size + VMt.size + VLt.size + C.size) / X.size
-    return [Y.reshape(3,3,3,3,3,3,3,3,3), rate]
+    return [Y.reshape((3,3,3,3,3,3,3,3,3)), rate]
 
 #tucker(get_np, 27)
 
@@ -58,7 +58,7 @@ def make_plot():
     y3 = []                                  #引き分けの割合
     #frobenius#
     y4 = []
-    X = get_np.reshape(27, 27, 27)       
+    X = get_np.reshape(27, 27, 27)      
     norm = np.sqrt(np.sum(X * X))                      
     for i in range(0, 28):
         #battle#
@@ -66,10 +66,10 @@ def make_plot():
         y2.append(main.battle(get_np, tucker(get_np, i)[0])[1])
         y3.append(main.battle(get_np, tucker(get_np, i)[0])[2])
         #frobenius#
-        Y = tucker(get_np, i)[0].reshape(27, 27, 27)
+        Y = tucker(get_np, i)[0].reshape((27, 27, 27))
         rate = tucker(get_np, i)[1]
         norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
-        x.append(rate)
+        x.append(rate)       
         y4.append(norm1 / norm)
     #battle#
     plt.xlabel("compression ratio")
