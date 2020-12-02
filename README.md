@@ -1,4 +1,4 @@
-# Using HOSVD(Higher-Order SVD) for tucker decompostion
+# Using HOSVD(Higher-Order SVD) for Tucker decompostion
 
 
 
