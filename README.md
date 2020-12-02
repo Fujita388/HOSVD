@@ -1,4 +1,4 @@
-# Using HOSVD(Higher-Order SVD) for Tucker decompostion
+# Using HOSVD(Higher-Order SVD) for data-approximation of Tic-Tac-Toe AI
 
 
 
