@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from scipy import linalg
 import random
 
 
@@ -69,12 +67,12 @@ def all_search(input_list):
 #np配列をファイルに保存
 def np_array(input_list):
     all_search(input_list)
-    np.save('study/svd_study/three_eyes', np.array(a))        #リストをnp配列に直して保存
+    np.save('study/svd/three_eyes', np.array(a))        #リストをnp配列に直して保存
     return 
 
 
 #もとの評価値の配列をロード
-get_np = np.load('study/svd_study/three_eyes.npy')         
+get_np = np.load('study/svd/three_eyes.npy')         
 
 
 #与えた盤面(入力した文字列)に対する評価値を返す
