@@ -2,7 +2,7 @@
 
 
 ## Summary
-SVD does not take into account the multidimensionality of data. Compared with SVD, HOSVD is more useful for the approximation of higher-order data. HOSVD can be applied to game theory such as Tic-Tac-Toe AI.  
+SVD does not take into account the multidimensionality of data. Compared with SVD, HOSVD is more useful for the approximation of higher-order data. This can be applied to game theory such as Tic-Tac-Toe AI.  
 
 
 ## task1.py  
