@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import main
 
 
-get_np = np.load('study/svd/three_eyes.npy')
+get_np = np.load('../svd/three_eyes.npy')
 
 
 #もとの行列を(27, 27, 27)のテンソルとして、tucker分解
@@ -50,6 +50,8 @@ def tucker(X, r):  #特異値を全て残す
 #tucker(get_np, 27)
 
 
+
+#matplotlibで図を作成
 def make_plot():             
     x = []
     #battle#
@@ -82,4 +84,81 @@ def make_plot():
     plt.show()
 
 
-make_plot()
+#make_plot()
+
+
+
+#datファイル作成
+def save_file(): 
+	with open("task2.dat", "w") as f:            
+		X = get_np.reshape(27, 27, 27)      
+		norm = np.sqrt(np.sum(X * X))                      
+		for i in range(0, 28):
+			#battle#
+			y1 = main.battle(get_np, tucker(get_np, i)[0])[0]   #originalが勝つ割合 
+			y2 = main.battle(get_np, tucker(get_np, i)[0])[1]   #svdが勝つ割合
+			y3 = main.battle(get_np, tucker(get_np, i)[0])[2]   #引き分けの割合 
+			#frobenius#
+			Y = tucker(get_np, i)[0].reshape((27, 27, 27))
+			x = tucker(get_np, i)[1]     #圧縮率
+			norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
+			y4 = norm1 / norm
+			f.write("{} {} {} {} {}\n".format(x, y1, y2, y3, y4))
+
+
+
+#save_file()
+
+
+#5回分の標準偏差を算出しdatファイルを作成
+def std_calc():
+	with open("task2_std.dat", "w") as f:
+		for i in range(0, 28):
+			y1 = []
+			y2 = []
+			y3 = []
+			for _ in range(5):
+				y1.append(main.battle(get_np, tucker(get_np, i)[0])[0])   #originalが勝つ割合 
+				y2.append(main.battle(get_np, tucker(get_np, i)[0])[1])   #svdが勝つ割合
+				y3.append(main.battle(get_np, tucker(get_np, i)[0])[2])   #引き分けの割合 
+			ans1 = np.std(y1)
+			ans2 = np.std(y2)
+			ans3 = np.std(y3)
+			f.write("{} {} {}\n".format(ans1, ans2, ans3))
+
+
+std_calc()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
