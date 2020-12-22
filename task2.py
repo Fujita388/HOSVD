@@ -12,7 +12,7 @@ get_np = np.load('../svd/three_eyes.npy')
 
 
 #もとの行列を(27, 27, 27)のテンソルとして、tucker分解
-def tucker(X, r):  #特異値を全て残す
+def tucker(X, r): 
     X = X.reshape(27, 27, 27)
     #右
     XR = X.reshape(729, 27) 
@@ -87,33 +87,15 @@ def make_plot():
 #make_plot()
 
 
-
-#datファイル作成
-def save_file(): 
-	with open("task2.dat", "w") as f:            
-		X = get_np.reshape(27, 27, 27)      
-		norm = np.sqrt(np.sum(X * X))                      
+#5回分の平均と標準偏差を算出しdatファイルを作成
+def save_file():
+	with open("task2.dat", "w") as f:
+		X = get_np.reshape(27, 27, 27)
+		norm = np.sqrt(np.sum(X * X))
 		for i in range(0, 28):
-			#battle#
-			y1 = main.battle(get_np, tucker(get_np, i)[0])[0]   #originalが勝つ割合 
-			y2 = main.battle(get_np, tucker(get_np, i)[0])[1]   #svdが勝つ割合
-			y3 = main.battle(get_np, tucker(get_np, i)[0])[2]   #引き分けの割合 
-			#frobenius#
-			Y = tucker(get_np, i)[0].reshape((27, 27, 27))
-			x = tucker(get_np, i)[1]     #圧縮率
-			norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
-			y4 = norm1 / norm
-			f.write("{} {} {} {} {}\n".format(x, y1, y2, y3, y4))
-
-
-
-#save_file()
-
-
-#5回分の標準偏差を算出しdatファイルを作成
-def std_calc():
-	with open("task2_std.dat", "w") as f:
-		for i in range(0, 28):
+			#圧縮率
+			x = tucker(get_np, i)[1]   
+			#battle
 			y1 = []
 			y2 = []
 			y3 = []
@@ -121,13 +103,20 @@ def std_calc():
 				y1.append(main.battle(get_np, tucker(get_np, i)[0])[0])   #originalが勝つ割合 
 				y2.append(main.battle(get_np, tucker(get_np, i)[0])[1])   #svdが勝つ割合
 				y3.append(main.battle(get_np, tucker(get_np, i)[0])[2])   #引き分けの割合 
-			ans1 = np.std(y1)
-			ans2 = np.std(y2)
-			ans3 = np.std(y3)
-			f.write("{} {} {}\n".format(ans1, ans2, ans3))
+			y1_m = np.mean(y1)
+			y2_m = np.mean(y2)
+			y3_m = np.mean(y3)
+			y1_std = np.std(y1)
+			y2_std = np.std(y2)
+			y3_std = np.std(y3)
+			#frobenius
+			Y = tucker(get_np, i)[0].reshape((27, 27, 27))
+			norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
+			y4 = norm1 / norm
+			f.write("{} {} {} {} {} {} {} {}\n".format(x, y1_m, y2_m, y3_m, y4, y1_std, y2_std, y3_std))
 
 
-std_calc()
+save_file()
 
 
 
