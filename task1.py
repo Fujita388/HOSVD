@@ -14,22 +14,26 @@ get_np = np.load('../svd/three_eyes.npy')
 
 #もとの評価値の配列(81, 243)をtucker分解する        
 def tucker(X, r):
-    X = X.reshape(81, 243)
-    u, _, v = linalg.svd(X)
-    #左側  
-    U = u[:, :r]                                      #u
-    Ut = np.transpose(U)                               #uダガー                             
-    #右側 
-    r2 = 3 * r                                      
-    Vt = v[:r2, :]                                    #vダガー
-    V = np.transpose(Vt)                             #v
-    #コアテンソル
-    C = Ut @ X @ V    
-    #復元            
-    Y = U @ C @ Vt  
-    #圧縮率
-    rate = (U.size + C.size + Vt.size) / X.size
-    return [Y.reshape(3,3,3,3,3,3,3,3,3), rate]
+	X = X.reshape(81, 243)
+	u, _, v = linalg.svd(X)
+	#左側  
+	U = u[:, :r]                                      #u
+	Ut = np.transpose(U)                               #uダガー                             
+	#右側 
+	r2 = 3 * r                                      
+	Vt = v[:r2, :]                                    #vダガー
+	V = np.transpose(Vt)                             #v
+	#コアテンソル
+	C = Ut @ X @ V    
+	#復元            
+	Y = U @ C @ Vt  
+	#圧縮率
+	rate = (U.size + C.size + Vt.size) / X.size
+	#フロべニウスノルムの相対誤差
+	norm = np.sqrt(np.sum(X * X))
+	norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))
+	frob = norm1 / norm
+	return [Y.reshape(3,3,3,3,3,3,3,3,3), rate, frob]
 
 #tucker(get_np, 81)
 
@@ -73,9 +77,7 @@ def make_plot():
 #5回分の平均と標準偏差を算出しdatファイルを作成
 def save_file():
 	with open("task1.dat", "w") as f:
-		X = get_np.reshape(81, 243)
-		norm = np.sqrt(np.sum(X * X))                      
-		for i in range(0, 28):
+		for i in range(0, 81):
 			#圧縮率
 			x = tucker(get_np, i)[1]  
 			#battle 
@@ -93,9 +95,7 @@ def save_file():
 			y2_std = np.std(y2)
 			y3_std = np.std(y3)
 			#frobenius
-			Y = tucker(get_np, i)[0].reshape(81, 243)
-			norm1 = np.sqrt(np.sum((X-Y) * (X-Y)))    
-			y4 = norm1 / norm
+			y4 = tucker(get_np, i)[2] 
 			f.write("{} {} {} {} {} {} {} {}\n".format(x, y1_m, y2_m, y3_m, y4, y1_std, y2_std, y3_std))
 
 
