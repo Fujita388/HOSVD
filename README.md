@@ -20,6 +20,6 @@ SVD does not take into account the multidimensionality of data. Compared with SV
 
 
 ## task4.py
- 1. 元の評価関数を(27, 27, 27)のテンソルとしてHOSVDした関数と、(81, 243)の行列としてSVDした関数の対戦
+ 1. 元の評価関数を(27, 27, 27)のテンソルとしてHOSVDして近似した関数と、(81, 243)の行列としてSVDして近似した関数の対戦
  
  2. 戦績、圧縮率の関係をプロット
