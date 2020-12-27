@@ -4,7 +4,6 @@
 
 import numpy as np
 from scipy import linalg
-import matplotlib.pyplot as plt
 import main
 
 
@@ -75,9 +74,9 @@ def cmpr(rate, num_svd, num_hosvd):  #圧縮率、svd特異値数、hosvd特異�
 #SVD vs HOSVD
 #5回分の平均と標準偏差を算出しdatファイルを作成
 def std_calc():
-	rate = [0.0, 0.08, 0.13, 0.20, 0.31, 0.43, 0.80, 1.0]
-	num_svd = [0, 5, 8, 12, 19, 26, 49, 61]
-	num_hosvd = [0, 2, 12, 14, 17, 19, 24, 26]
+	rate = [0.0, 0.049, 0.13, 0.20, 0.31, 0.43, 0.80, 1.0]
+	num_svd = [0, 3, 8, 12, 19, 26, 49, 61]
+	num_hosvd = [0, 7, 12, 14, 17, 19, 24, 26]
 	with open("task4.dat", "w") as f:
 		for i, j, k in zip(rate, num_svd, num_hosvd):
 			x = cmpr(i, j, k)[0]   #圧縮率
