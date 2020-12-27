@@ -72,58 +72,33 @@ def cmpr(rate, num_svd, num_hosvd):  #圧縮率、svd特異値数、hosvd特異�
 	return [rate, y1, y2, y3]
 
 
-#SVD vs HOSVD(datファイル作成)
-def iteration():
-	with open("task4.dat", "w") as f:
-		f.write("{} {} {} {}\n".format(cmpr(0,0,0)[0], cmpr(0,0,0)[1], cmpr(0,0,0)[2], cmpr(0,0,0)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.08,5,2)[0], cmpr(0.08,5,2)[1], cmpr(0.08,5,2)[2], cmpr(0.08,5,2)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.13,8,12)[0], cmpr(0.13,8,12)[1], cmpr(0.13,8,12)[2], cmpr(0.13,8,12)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.20,12,14)[0], cmpr(0.20,12,14)[1], cmpr(0.20,12,14)[2], cmpr(0.20,12,14)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.31,19,17)[0], cmpr(0.31,19,17)[1], cmpr(0.31,19,17)[2], cmpr(0.31,19,17)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.43,26,19)[0], cmpr(0.43,26,19)[1], cmpr(0.43,26,19)[2], cmpr(0.43,26,19)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(0.80,49,24)[0], cmpr(0.80,49,24)[1], cmpr(0.80,49,24)[2], cmpr(0.80,49,24)[3]))
-		f.write("{} {} {} {}\n".format(cmpr(1,61,26)[0], cmpr(1,61,26)[1], cmpr(1,61,26)[2], cmpr(1,61,26)[3]))
-
-
-
-#iteration()
-
-
-#5回分の標準偏差を算出しdatファイルを作成
+#SVD vs HOSVD
+#5回分の平均と標準偏差を算出しdatファイルを作成
 def std_calc():
+	rate = [0.0, 0.08, 0.13, 0.20, 0.31, 0.43, 0.80, 1.0]
+	num_svd = [0, 5, 8, 12, 19, 26, 49, 61]
+	num_hosvd = [0, 2, 12, 14, 17, 19, 24, 26]
 	with open("task4.dat", "w") as f:
-		x1 = []   #hosvd
-		x2 = []   #svd
-		x3 = []   #引き分け
-		for _ in range(5):
-			x1.append(cmpr(0,0,0)[1])
-			x2.append(cmpr(0,0,0)[2])
-			x3.append(cmpr(0,0,0)[3])
-		ans1 = np.std(x1)
-		ans2 = np.std(x2)
-		ans3 = np.std(x3)
-		f.write("{} {} {}\n".format(ans1, ans2, ans3))
+		for i, j, k in zip(rate, num_svd, num_hosvd):
+			x = cmpr(i, j, k)[0]   #圧縮率
+			y1 = []   #hosvd
+			y2 = []   #svd
+			y3 = []   #引き分け
+			for _ in range(5):
+				y1.append(cmpr(i, j, k)[1])
+				y2.append(cmpr(i, j, k)[2])
+				y3.append(cmpr(i, j, k)[3])
+			y1_m = np.mean(y1)
+			y2_m = np.mean(y2)
+			y3_m = np.mean(y3)
+			y1_std = np.std(y1)
+			y2_std = np.std(y2)
+			y3_std = np.std(y3)
+			f.write("{} {} {} {} {} {} {}\n".format(x, y1_m, y2_m, y3_m, y1_std, y2_std, y3_std))
 
 
 std_calc()
 
-
-#追記用
-def std_calc1():
-	with open("task4_std.dat", "a") as f:
-		x1 = []   #hosvd
-		x2 = []   #svd
-		x3 = []   #引き分け
-		for _ in range(5):
-			x1.append(cmpr(1,61,26)[1])
-			x2.append(cmpr(1,61,26)[2])
-			x3.append(cmpr(1,61,26)[3])
-		ans1 = np.std(x1)
-		ans2 = np.std(x2)
-		ans3 = np.std(x3)
-		f.write("{} {} {}\n".format(ans1, ans2, ans3))
-
-#std_calc1()
 
 
 
