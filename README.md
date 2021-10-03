@@ -1,4 +1,4 @@
-# Using HOSVD(Higher-Order SVD) for data-approximation of Tic-Tac-Toe AI
+# Applying HOSVD(Higher-Order SVD) to data-approximation of Tic-Tac-Toe AI
 
 
 ## Summary
